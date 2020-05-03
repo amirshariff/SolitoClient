@@ -1,10 +1,10 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom'
 
 
-
 const NavigationBar = (props) => {
+	const [albums, setAlbums] = useState([])
     return (
 			<div>
 				<Navbar bg="dark" variant="light">
@@ -15,6 +15,8 @@ const NavigationBar = (props) => {
 						<Fragment>
 							<NavLink to='login'  > Login</NavLink>
 							<NavLink to='signup' > Sign Up</NavLink> 
+							 
+							
 						</Fragment>
 						:
 						<NavLink to='logout' onClick={props.handle_logout}> Log Out</NavLink>
