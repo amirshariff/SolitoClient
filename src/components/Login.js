@@ -48,9 +48,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Login = (props) => {
 	const classes = useStyles();
-
-	const [username, setUsername] = React.useState('');
-	const [password, setPassword] = React.useState('');
+	const [username, setUsername] = useState('')
+	const [password, setPassword] = useState('')
 
 	return (
 		<Grid container component="main" className={classes.root}>
@@ -62,12 +61,13 @@ const Login = (props) => {
 						<LockOutlinedIcon />
 					</Avatar>
 					<Typography component="h1" variant="h5">
-						{props.signup ? 'SignUp' : 'SignIn'}
+						{/* {props.signup ? 'SignUp' : 'SignIn'} */}
+						SignIn
 					</Typography>
 					<form
 						className={classes.form}
 						noValidate
-						onSubmit={(e) => props.handle_login(e, {username: username, password: password})}
+						onSubmit={(e) => props.handle_login(e, { username: username, password: password })}
 					>
 						<TextField
 							variant="outlined"
@@ -80,7 +80,7 @@ const Login = (props) => {
 							autoComplete="username"
 							autoFocus
 							value={username}
-							onChange={(event)=>{setUsername(event.target.value)}}
+							onChange={(event) => { setUsername(event.target.value) }}
 						/>
 						<TextField
 							variant="outlined"

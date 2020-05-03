@@ -1,0 +1,15 @@
+a {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: none;
+}
+#login, #albums {
+    margin-right: 20px;
+}
+#signup {
+    margin-right: 40px;
+}
+#logout {
+    margin-right: 40px;
+}
