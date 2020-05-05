@@ -7,11 +7,18 @@ import './PicCard.css';
 const PicCard = (props) => {
 
     const viewHandler = () => {
-        props.history.push(props.id + '/photos')
+        props.history.push(props.id+ '/photos')
     }
 
     const deleteHandler = () => {
-        // fetch
+        fetch('http://localhost:8000/api/show_album/', {
+            method: 'DELETE',
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`
+
+            }
+        }) 
+       
     }
 
     return (

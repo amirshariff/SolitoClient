@@ -2,58 +2,52 @@ import React, { Component } from 'react';
 import PicCard from './PicCard';
 
 import './Album.css';
+// import { useRadioGroup } from '@material-ui/core';
 
 class Album extends Component {
     state = {
-        albums: [
-            {
-                id: 1,
-                album_name: 'Album1',
-                album_description: 'Description of Album1',
-                is_private: false
-            },
-            {
-                id: 2,
-                album_name: 'Album2',
-                album_description: 'Description of Album2',
-                is_private: true
-            },
-            {
-                id: 3,
-                album_name: 'Album3',
-                album_description: 'Description of Album3',
-                is_private: true
-            },
-            {
-                id: 4,
-                album_name: 'Album4',
-                album_description: 'Description of Album4',
-                is_private: false
-            }
-        ],
-        albumName: ''
+        albums: [],
+        newAlbum : ''
     }
 
-    // componentDidMount() {
+    componentDidMount() {
 
-    //     fetch('http://localhost:8000/api/get_albums/')
-    //         .then((res) => res.json())
-    //         .then((json) => { 
-    //             this.setState({
-    //                 albums: json
-    //             })
-    //          })
+        fetch('http://localhost:8000/api/get_albums/', {
+            method: 'GET',
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        })
+            .then((res) => res.json())
+            .then((json) => {
+                this.setState({
+                    albums: json.album
+                })
+            })
 
-    // }
-
-    createAlbumHandler = () => {
-        //create album in the backend with the albumName in state
     }
 
+    createAlbumHandler = () => { 
+        fetch('http://localhost:8000/api/addalbum/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Token ${localStorage.getItem('token')}`,
+
+            },
+            body: JSON.stringify({
+                album_name: this.state.newAlbum
+                
+               
+            })
+        }) 
+    }
+      
     albumNameChangeHandler = (event) => {
         this.setState({
-            albumName: event.target.value
+            newAlbum: event.target.value
         })
+
     }
 
 
@@ -80,10 +74,10 @@ class Album extends Component {
                     <div className="container">
                         <h1 className="display-2">Hello</h1>
                         <p className="lead">Manage Your Albums</p>
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" onChange={(event) => { this.albumNameChangeHandler(event) }} placeholder="Album name" aria-label="Album's name" aria-describedby="createone" />
-                            <div class="input-group-append">
-                                <button class="btn btn-succes" type="button" id="createone" onClick={this.createAlbumHandler}>Submit</button>
+                        <div className="input-group mb-3">
+                            <input type="text" className="form-control" onChange={(event) => { this.albumNameChangeHandler(event) }} placeholder="Album name" aria-label="Album's name" aria-describedby="createone" />
+                            <div className="input-group-append">
+                                <button className="btn btn-succes" type="button" id="createone" onClick={this.createAlbumHandler}>Submit</button>
                             </div>
                         </div>
                     </div>

@@ -16,13 +16,14 @@ const NavigationBar = (props) => {
 					<ul className="navbar-nav ml-auto">
 						{
 							!props.logged_in ?
+								
 								<Fragment>
-									<li id='login'><Link to="/login" style={{ outline: 'none' }} onClick={props}>Login</Link></li>
+									<li id='login' onClick={props} ><Link to="/login" style={{ outline: 'none' }} >Login</Link></li>
 									<li id='signup'><Link to="/signup" style={{ outline: 'none' }}>SignUp</Link></li>
 								</Fragment> :
 								<Fragment>
 									<li id='albums' role='button'><Link to="/albums" style={{ outline: 'none' }}>Albums</Link></li>
-									<li id='logout'><Link to="/logout" style={{ outline: 'none' }}>Logout</Link></li>
+									<li id='logout' onClick={props.handle_logout}><Link to="/logout" style={{ outline: 'none' }}>Logout</Link></li>
 								</Fragment>
 						}
 					</ul>

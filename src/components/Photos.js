@@ -24,17 +24,37 @@ class Photos extends Component {
     }
 
     onChangeimage = (event) => {
-        console.log(event.target.files[0])
+        console.log('file ', event.target.files[0])
         this.setState({
             selectedFile: event.target.files[0]
         })
     }
 
     onSubmitImageHandler = () => {
-        // take the image from the state(selectedFile) and add it to backend
+        
+        let album_name = 'iiii'
+        const data = new FormData();
+        console.log('0', this.state.selectedFile)
+       const file = this.state.selectedFile
+
+        console.log('1',data)
+        data.append('picture_file', file, file.name);
+        data.append('album_name', album_name);
+        console.log('2',data)
+        fetch('http://localhost:8000/api/addpicture/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                 Authorization: `Token ${localStorage.getItem('token')}`
+            },
+            body: data
+        }).then((res) => console.log(res)).catch(err => {
+                throw new Error(err)
+            })
     }
 
     render() {
+        console.log(localStorage.token)
         let photos = ''
         if (this.state.photos.length > 0) {
             photos = this.state.photos.map((photo, i) => {
@@ -57,7 +77,7 @@ class Photos extends Component {
                                 <input type="file" onChange={(event) => this.onChangeimage(event)} />
                             </label>
                         </div>
-                        <button type="button" class="btn btn-light" onClick={this.onSubmitImageHandler}>Add Picture</button>
+                        <form type="button" class="btn btn-light" onClick={this.onSubmitImageHandler}>Add Picture</form>
                     </div>
                 </div>
                 <div>
