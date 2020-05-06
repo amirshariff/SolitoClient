@@ -68,7 +68,7 @@ const Login = (props) => {
                     <form
                         className={classes.form}
                         noValidate
-                        onSubmit={(e) => props.handle_signup(e, { username: username, email: email, password: password })}
+                        onSubmit={(e) => props.handleSignup(e, { username: username, email: email, password: password })}
                     >
                         <TextField
                             variant="outlined"

@@ -1,33 +1,23 @@
 import React, { Component } from 'react';
-import { Route, useHistory } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import Landing from './components/Landing';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
 import NavigationBar from './utility/NavigationBar';
+import AlbumCollection from './components/AlbumCollection';
 import Album from './components/Album';
-import Photos from './components/Photos';
 
 class App extends Component {
 	state = {
-		logged_in: localStorage.getItem('token') ? true : false,
-		username: ''
+		user: null,
 	};
 
-	// componentDidMount() {
-	// 	if (this.state.logged_in) {
-	// 		fetch('http://localhost:8000/api/current_user/', {
-	// 			headers: {
-	// 				Authorization: `JWT ${localStorage.getItem('token')}`,
-	// 			},
-	// 		})
-	// 			.then((res) => res.json())
-	// 			.then((json) => {
-	// 				this.setState({ username: json.user});
-	// 			});
-	// 	}
-	// }
-	handle_login = (e, data) => {
+	componentDidMount() {
+		if (localStorage.getItem('token')) this.validateToken();
+	}
+
+	handleLogin = (e, data) => {
 		e.preventDefault();
 		fetch('http://127.0.0.1:8000/api/auth/token/login/', {
 			method: 'POST',
@@ -39,16 +29,11 @@ class App extends Component {
 			.then((res) => res.json())
 			.then((json) => {
 				localStorage.setItem('token', json.auth_token);
-				this.setState({
-					logged_in: true,
-					// username: json.user.username
-				});
-				// console.log(this.props)
-				this.props.history.push('/albums') 
-			}); 
+				this.validateToken();
+			});
 	};
 
-	handle_signup = (e, data) => {
+	handleSignup = (e, data) => {
 		e.preventDefault();
 		fetch('http://localhost:8000/api/register/', {
 			method: 'POST',
@@ -58,35 +43,61 @@ class App extends Component {
 			body: JSON.stringify(data),
 		})
 			.then((res) => res.json())
+			.then((json) => this.props.history.push('/login'));
+	};
+
+	validateToken = () => {
+		fetch('http://localhost:8000/api/current_user/', {
+			headers: {
+				Authorization: `Token ${localStorage.getItem('token')}`,
+			},
+		})
+			.then((res) => res.json())
 			.then((json) => {
-				// console.log(json)
-				localStorage.setItem('token', json.token);
-				this.setState({
-					logged_in: true,
-				});
-				this.props.history.push('/login') 
+				this.setState({ user: json });
+				//this.props.history.push('/albums');
 			});
 	};
 
 	handle_logout = () => {
-		localStorage.removeItem('token')
-		this.setState({ logged_in: false, username: '' });
-		this.props.history.push('/login')
+		localStorage.removeItem('token');
+		this.setState({ user: null });
+		this.props.history.push('/login');
 	};
 
 	render() {
 		return (
 			<div>
 				<NavigationBar
-					logged_in={this.state.logged_in}
+					user={this.state.user}
 					display_form={this.display_form}
 					handle_logout={this.handle_logout}
 				/>
 				<Route exact path="/" component={Landing} />
-				<Route exact path="/login" render={() => <Login handle_login={this.handle_login} />} />
-				<Route exact path="/signup" render={() => <SignUp handle_signup={this.handle_signup} />} />
-				<Route exact path="/albums" component={Album} />
-				<Route exact path='/:name/photos' component={Photos} />
+				<Route
+					exact
+					path="/login"
+					render={() => <Login handleLogin={this.handleLogin} />}
+				/>
+				<Route
+					exact
+					path="/signup"
+					render={() => <SignUp handleSignup={this.handleSignup} />}
+				/>
+				<Route
+					exact
+					path="/albums"
+					render={(routerProps) => (
+						<AlbumCollection {...routerProps} user={this.state.user} />
+					)}
+				/>
+				<Route
+					exact
+					path="/a/:albumId"
+					render={(routerProps) => (
+						<Album {...routerProps} user={this.state.user} />
+					)}
+				/>
 				{/* <h3>
 					{this.state.logged_in
 						? `Hello, ${this.state.username}`

@@ -1,93 +1,63 @@
 import React, { Component } from 'react';
-import PicCard from './PicCard';
-
-import './Album.css';
-// import { useRadioGroup } from '@material-ui/core';
+import PrivateAlbum from './PrivateAlbum';
+import PublicAlbum from './PublicAlbum';
+import './Photo.css';
 
 class Album extends Component {
-    state = {
-        albums: [],
-        newAlbum : ''
-    }
+	state = {
+		id: 0,
+		creator: 0,
+		album_name: '',
+		is_private: false,
+		pictures: [],
+	};
 
-    componentDidMount() {
+	componentDidMount() {
+		const albumId = this.props.match.params.albumId;
 
-        fetch('http://localhost:8000/api/get_albums/', {
-            method: 'GET',
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        })
-            .then((res) => res.json())
-            .then((json) => {
-                this.setState({
-                    albums: json.album
-                })
-            })
+		fetch(`http://localhost:8000/api/album/${albumId}`, {
+			headers: { Authorization: `Token ${localStorage.getItem('token')}` },
+		})
+			.then((r) => r.json())
+			.then((albumInfo) => {
+				this.setState(albumInfo);
+			});
+	}
 
-    }
+	onSubmitImageHandler = (file) => {
+		const data = new FormData();
 
-    createAlbumHandler = () => { 
-        fetch('http://localhost:8000/api/addalbum/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Token ${localStorage.getItem('token')}`,
+		data.append('picture_file', file);
+		data.append('album_id', this.state.id);
+		data.append('title', 'Untitled');
 
-            },
-            body: JSON.stringify({
-                album_name: this.state.newAlbum
-                
-               
-            })
-        }) 
-    }
-      
-    albumNameChangeHandler = (event) => {
-        this.setState({
-            newAlbum: event.target.value
-        })
+		fetch('http://localhost:8000/api/addpicture/', {
+			method: 'POST',
+			headers: {
+				// 'Content-Type': 'multipart/form-data',
+				Authorization: `Token ${localStorage.getItem('token')}`,
+			},
+			body: data,
+		})
+			.then((res) => res.json())
+			.then((newPicture) => {
+				this.setState({ pictures: [...this.state.pictures, newPicture] });
+			})
+			.catch((err) => {
+				throw new Error(err);
+			});
+	};
 
-    }
-
-
-    render() {
-        let albums = ''
-        if (this.state.albums.length > 0) {
-            albums = this.state.albums.map((album) => {
-                return (
-                    <div className='col-md-3'>
-                        <PicCard
-                            id={album.id}
-                            key={album.id}
-                            name={album.album_name}
-                            // description={album.album_description}
-                            viewing={album.is_private ? false : true}
-                        />
-                    </div>
-                )
-            })
-        }
-        return (
-            <div className='container-fluid'>
-                <div className="jumbotron jumbotron-fluid">
-                    <div className="container">
-                        <h1 className="display-2">Hello</h1>
-                        <p className="lead">Manage Your Albums</p>
-                        <div className="input-group mb-3">
-                            <input type="text" className="form-control" onChange={(event) => { this.albumNameChangeHandler(event) }} placeholder="Album name" aria-label="Album's name" aria-describedby="createone" />
-                            <div className="input-group-append">
-                                <button className="btn btn-succes" type="button" id="createone" onClick={this.createAlbumHandler}>Submit</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className='row mt-2'>
-                    {albums}
-                </div>
-            </div>
-        );
-    }
+	render() {
+		return this.props.user && this.props.user.id === this.state.creator ? (
+			<PrivateAlbum
+				album={this.state}
+				onSubmitImageHandler={this.onSubmitImageHandler}
+			/>
+		) : (
+			<PublicAlbum album={this.state} />
+		);
+	}
 }
 
 export default Album;

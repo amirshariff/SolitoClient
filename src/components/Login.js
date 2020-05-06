@@ -11,8 +11,6 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
-
-
 const useStyles = makeStyles((theme) => ({
 	root: {
 		height: '100vh',
@@ -48,8 +46,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Login = (props) => {
 	const classes = useStyles();
-	const [username, setUsername] = useState('')
-	const [password, setPassword] = useState('')
+	const [username, setUsername] = useState('');
+	const [password, setPassword] = useState('');
 
 	return (
 		<Grid container component="main" className={classes.root}>
@@ -67,7 +65,9 @@ const Login = (props) => {
 					<form
 						className={classes.form}
 						noValidate
-						onSubmit={(e) => props.handle_login(e, { username: username, password: password })}
+						onSubmit={(e) =>
+							props.handleLogin(e, { username: username, password: password })
+						}
 					>
 						<TextField
 							variant="outlined"
@@ -80,7 +80,9 @@ const Login = (props) => {
 							autoComplete="username"
 							autoFocus
 							value={username}
-							onChange={(event) => { setUsername(event.target.value) }}
+							onChange={(event) => {
+								setUsername(event.target.value);
+							}}
 						/>
 						<TextField
 							variant="outlined"
@@ -93,8 +95,9 @@ const Login = (props) => {
 							id="password"
 							autoComplete="current-password"
 							value={password}
-							onChange={(event) => { setPassword(event.target.value) }}
-
+							onChange={(event) => {
+								setPassword(event.target.value);
+							}}
 						/>
 						<FormControlLabel
 							control={<Checkbox value="remember" color="primary" />}
