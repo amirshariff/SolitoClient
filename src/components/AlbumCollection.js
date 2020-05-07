@@ -15,7 +15,7 @@ class AlbumCollection extends Component {
 	//     return true
 	// }
 	componentDidMount() {
-		if (!this.props.user) return this.props.history.push('/')
+		if (!this.props.user) return this.props.history.push('/');
 
 		fetch('http://localhost:8000/api/get_albums/', {
 			method: 'GET',
@@ -72,9 +72,9 @@ class AlbumCollection extends Component {
 	};
 
 	render() {
-		const albums = this.state.albums.map((album) => {
+		const albums = this.state.albums.map((album, i) => {
 			return (
-				<div className="col-md-3">
+				<div key={i} className="col-md-3">
 					<PicCard
 						id={album.id}
 						key={album.id}

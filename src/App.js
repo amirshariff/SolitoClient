@@ -7,6 +7,7 @@ import SignUp from './components/SignUp';
 import NavigationBar from './utility/NavigationBar';
 import AlbumCollection from './components/AlbumCollection';
 import Album from './components/Album';
+import NotFound404 from './utility/NotFound404';
 
 class App extends Component {
 	state = {
@@ -31,6 +32,7 @@ class App extends Component {
 				localStorage.setItem('token', json.auth_token);
 				this.validateToken();
 			});
+		this.props.history.push('/albums');
 	};
 
 	handleSignup = (e, data) => {
@@ -55,7 +57,7 @@ class App extends Component {
 			.then((res) => res.json())
 			.then((json) => {
 				this.setState({ user: json });
-				//this.props.history.push('/albums');
+				// this.props.history.push('/albums');
 			});
 	};
 
@@ -98,11 +100,11 @@ class App extends Component {
 						<Album {...routerProps} user={this.state.user} />
 					)}
 				/>
-				{/* <h3>
-					{this.state.logged_in
-						? `Hello, ${this.state.username}`
-						: 'Please Log In'}
-				</h3> */}
+				<Route
+					exact
+					path="/404"
+					render={(routerProps) => <NotFound404 {...routerProps} />}
+				/>
 			</div>
 		);
 	}

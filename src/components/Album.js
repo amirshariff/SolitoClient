@@ -8,19 +8,24 @@ class Album extends Component {
 		id: 0,
 		creator: 0,
 		album_name: '',
-		is_private: false,
+		is_private: true,
 		pictures: [],
 	};
 
 	componentDidMount() {
 		const albumId = this.props.match.params.albumId;
+		const token = localStorage.getItem('token');
+		const options = {
+			headers: { Authorization: `Token ${token}` },
+		};
 
-		fetch(`http://localhost:8000/api/album/${albumId}`, {
-			headers: { Authorization: `Token ${localStorage.getItem('token')}` },
-		})
+		fetch(`http://localhost:8000/api/album/${albumId}`, token ? options : null)
 			.then((r) => r.json())
 			.then((albumInfo) => {
 				this.setState(albumInfo);
+			})
+			.catch((error) => {
+				this.props.history.push('/404');
 			});
 	}
 
@@ -48,11 +53,45 @@ class Album extends Component {
 			});
 	};
 
+	deleteHandler = (pictureId) => {
+		fetch(`http://localhost:8000/api/picture_delete/${pictureId}`, {
+			method: 'DELETE',
+			headers: {
+				Authorization: `Token ${localStorage.getItem('token')}`,
+			},
+		}).then(() => {
+			const updatedPictures = this.state.pictures.filter(
+				(p) => p.id !== pictureId
+			);
+
+			this.setState({ pictures: updatedPictures });
+		});
+	};
+
+	onTogglePriPub = (event) => {
+		fetch(`http://localhost:8000/api/album/${this.state.id}`, {
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Token ${localStorage.getItem('token')}`,
+			},
+			body: JSON.stringify({
+				is_private: !this.state.is_private,
+			}),
+		})
+			.then((r) => r.json())
+			.then((updatedAlbum) => {
+				this.setState({ is_private: updatedAlbum.is_private });
+			});
+	};
+
 	render() {
 		return this.props.user && this.props.user.id === this.state.creator ? (
 			<PrivateAlbum
+				deleteHandler={this.deleteHandler}
 				album={this.state}
 				onSubmitImageHandler={this.onSubmitImageHandler}
+				onTogglePriPub={this.onTogglePriPub}
 			/>
 		) : (
 			<PublicAlbum album={this.state} />

@@ -11,7 +11,7 @@ class PrivateAlbum extends Component {
 		return this.props.album.pictures.map((picture, i) => {
 			return (
 				<div key={i} className="col-md-3">
-					<Photo picture={picture} deleteHandler={this.deleteHandler} />
+					<Photo picture={picture} deleteHandler={this.props.deleteHandler} />
 				</div>
 			);
 		});
@@ -23,19 +23,26 @@ class PrivateAlbum extends Component {
 		});
 	};
 
-	deleteHandler = (pictureId) => {
-		fetch(`http://localhost:8000/api/picture_delete/${pictureId}`, {
-			method: 'DELETE',
-			headers: {
-				Authorization: `Token ${localStorage.getItem('token')}`,
-			},
-		}).then(() => {
-			const updatedPictures = this.state.pictures.filter(
-				(p) => p.id !== pictureId
-			);
-
-			this.setState({ pictures: updatedPictures });
-		});
+	privatePublicButton = () => {
+		return (
+			<div className="badge badge-pill badge-success" id="upload">
+				<button onClick={this.props.onTogglePriPub}>
+					{this.props.album.is_private ? (
+						<img
+							src="https://getdrawings.com/free-icon-bw/eyeball-icon-21.jpg"
+							alt=""
+							style={{ width: '40px' }}
+						/>
+					) : (
+						<img
+							src="https://cdn2.iconfinder.com/data/icons/ui-22/24/522-512.png"
+							alt=""
+							style={{ width: '40px' }}
+						/>
+					)}
+				</button>
+			</div>
+		);
 	};
 
 	render() {
@@ -45,8 +52,9 @@ class PrivateAlbum extends Component {
 					<div className="container">
 						<h1 className="display-2">{this.props.album.album_name}</h1>
 						<p className="lead">Welcome Back try adding images to your album</p>
+						{this.privatePublicButton()}
 						<div className="badge badge-pill badge-success" id="upload">
-							{/* <label className="fileContainer">
+							<label className="fileContainer">
 								<img
 									src="https://img.icons8.com/cotton/64/000000/upload.png"
 									alt=""
@@ -56,7 +64,7 @@ class PrivateAlbum extends Component {
 									type="file"
 									onChange={(event) => this.onChangeimage(event)}
 								/>
-							</label> */}
+							</label>
 						</div>
 						<form
 							type="button"

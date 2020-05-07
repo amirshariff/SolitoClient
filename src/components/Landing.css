@@ -1,0 +1,34 @@
+section.landing {
+	/* background-color: aqua; */
+	height: 80vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-image: linear-gradient(
+		90deg,
+		rgba(200, 200, 200),
+		transparent,
+		rgb(100, 100, 100)
+	);
+	background-image: url('../utility/images/heather-shevlin-3B_NrzTjajc-unsplash.jpg');
+	background-size: 200% 300%;
+	filter: grayscale(70%);
+	background-position: left;
+	animation: movebackground 34s infinite;
+}
+h1 {
+	text-transform: uppercase;
+}
+
+.quotes-container {
+	height: 80%;
+	width: 60%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+}
+p {
+	color: white;
+	font-size: 1.5rem;
+	letter-spacing: 2px;
+}
